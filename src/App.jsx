@@ -1,20 +1,30 @@
 import { useState } from 'react'
 import { ImageUploader } from './components/ImageUploader'
 import { IconPreview } from './components/IconPreview'
+import { ImageCropper } from './components/ImageCropper'
 import { generateFavicons, downloadZip } from './utils/generator'
 import './index.css'
 
 function App() {
   const [icons, setIcons] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(null)
 
-  const handleImageUpload = async (file) => {
+  const handleImageSelect = (file) => {
+    // Create a URL for the file to be used in the cropper
+    const imageUrl = URL.createObjectURL(file)
+    setSelectedImage(imageUrl)
+  }
+
+  const handleCropComplete = async (croppedBlob) => {
+    // User confirmed crop, proceed to generation
+    setSelectedImage(null) // Close cropper
+
+    // Proceed with generation using the cropped blob
     setIsGenerating(true)
     try {
-      // Simulate a small delay for better UX (so the loader is visible)
       await new Promise(resolve => setTimeout(resolve, 800))
-
-      const generated = await generateFavicons(file)
+      const generated = await generateFavicons(croppedBlob)
       setIcons(generated)
     } catch (error) {
       console.error("Failed to generate icons:", error)
@@ -22,6 +32,10 @@ function App() {
     } finally {
       setIsGenerating(false)
     }
+  }
+
+  const handleCropCancel = () => {
+    setSelectedImage(null)
   }
 
   const handleDownload = () => {
@@ -69,7 +83,8 @@ function App() {
 
       <main style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
         <section>
-          <ImageUploader onImageUpload={handleImageUpload} isGenerating={isGenerating} />
+          {/* Changed onImageUpload to handleImageSelect to trigger crop flow first */}
+          <ImageUploader onImageUpload={handleImageSelect} isGenerating={isGenerating} />
         </section>
 
         {icons && (
@@ -78,6 +93,15 @@ function App() {
           </section>
         )}
       </main>
+
+      {/* Render Cropper Modal if an image is selected */}
+      {selectedImage && (
+        <ImageCropper
+          image={selectedImage}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
 
       <footer style={{
         textAlign: 'center',
