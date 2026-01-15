@@ -1,19 +1,25 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ImageUploader } from './components/ImageUploader'
 import { IconPreview } from './components/IconPreview'
 import { ImageCropper } from './components/ImageCropper'
+import { ColorSchemeDisplay } from './components/ColorSchemeDisplay'
 import { generateFavicons, downloadZip } from './utils/generator'
+import ColorThief from 'colorthief'
 import './index.css'
 
 function App() {
   const [icons, setIcons] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
+  const [colorScheme, setColorScheme] = useState(null)
 
   const handleImageSelect = (file) => {
     // Create a URL for the file to be used in the cropper
     const imageUrl = URL.createObjectURL(file)
     setSelectedImage(imageUrl)
+    // Reset previous results
+    setIcons(null)
+    setColorScheme(null)
   }
 
   const handleCropComplete = async (croppedBlob) => {
@@ -23,6 +29,24 @@ function App() {
     // Proceed with generation using the cropped blob
     setIsGenerating(true)
     try {
+      // Extract colors
+      const img = new Image();
+      const imageUrl = URL.createObjectURL(croppedBlob);
+      img.src = imageUrl;
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      try {
+        const colorThief = new ColorThief();
+        const palette = colorThief.getPalette(img, 5);
+        setColorScheme(palette);
+      } catch (err) {
+        console.error("Failed to extract colors:", err);
+      }
+
       await new Promise(resolve => setTimeout(resolve, 800))
       const generated = await generateFavicons(croppedBlob)
       setIcons(generated)
@@ -86,6 +110,12 @@ function App() {
           {/* Changed onImageUpload to handleImageSelect to trigger crop flow first */}
           <ImageUploader onImageUpload={handleImageSelect} isGenerating={isGenerating} />
         </section>
+
+        {colorScheme && (
+          <section>
+            <ColorSchemeDisplay colors={colorScheme} />
+          </section>
+        )}
 
         {icons && (
           <section>
