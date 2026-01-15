@@ -37,29 +37,27 @@ export function ImageCropper({ image, onCropComplete, onCancel }) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
             zIndex: 1000,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '2rem'
+            padding: 'var(--space-lg)',
         }}>
             <div style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: '600px',
-                height: '600px',
-                backgroundColor: 'var(--card-bg)', // assuming card-bg exists, or use white/dark fallback
-                background: '#1e293b', // Fallback to a dark slate compatible with likely theme
-                borderRadius: '1rem',
+                maxWidth: '500px',
+                background: 'var(--bg-secondary)',
+                borderRadius: 'var(--radius-lg)',
                 overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column'
+                border: '1px solid var(--border-subtle)',
             }}>
+                {/* Crop area */}
                 <div style={{
                     position: 'relative',
-                    flex: 1,
-                    background: '#0f172a'
+                    height: '400px',
+                    background: 'var(--bg-primary)',
                 }}>
                     <Cropper
                         image={image}
@@ -72,46 +70,69 @@ export function ImageCropper({ image, onCropComplete, onCancel }) {
                     />
                 </div>
 
+                {/* Controls */}
                 <div style={{
-                    padding: '1.5rem',
+                    padding: 'var(--space-md)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '1rem',
-                    background: '#1e293b'
+                    gap: 'var(--space-md)',
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <span style={{ color: '#fff', fontSize: '0.9rem' }}>Zoom</span>
+                    {/* Zoom slider */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--space-sm)'
+                    }}>
+                        <span style={{
+                            color: 'var(--text-muted)',
+                            fontSize: '0.75rem',
+                            fontWeight: 'var(--font-weight-light)',
+                            letterSpacing: '0.05em',
+                            textTransform: 'uppercase',
+                            minWidth: '40px',
+                        }}>
+                            Zoom
+                        </span>
                         <input
                             type="range"
                             value={zoom}
                             min={1}
                             max={3}
                             step={0.1}
-                            aria-labelledby="Zoom"
+                            aria-label="Zoom"
                             onChange={(e) => setZoom(Number(e.target.value))}
-                            style={{ flex: 1, cursor: 'pointer' }}
+                            style={{
+                                flex: 1,
+                                cursor: 'pointer',
+                                accentColor: 'var(--accent-primary)',
+                            }}
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                    {/* Buttons */}
+                    <div style={{
+                        display: 'flex',
+                        gap: 'var(--space-sm)',
+                        justifyContent: 'flex-end'
+                    }}>
                         <button
                             onClick={onCancel}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem',
-                                padding: '0.75rem 1.5rem',
-                                borderRadius: '0.5rem',
-                                border: '1px solid #475569',
+                                gap: 'var(--space-xs)',
+                                padding: 'var(--space-xs) var(--space-sm)',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid var(--border-subtle)',
                                 background: 'transparent',
-                                color: '#cbd5e1',
+                                color: 'var(--text-secondary)',
                                 cursor: 'pointer',
-                                fontSize: '1rem',
-                                fontWeight: 500,
-                                transition: 'all 0.2s'
+                                fontSize: '0.875rem',
+                                fontWeight: 'var(--font-weight-normal)',
+                                transition: 'var(--transition-quick)',
                             }}
                         >
-                            <X size={18} />
+                            <X size={16} strokeWidth={1.5} />
                             Cancel
                         </button>
                         <button
@@ -119,20 +140,20 @@ export function ImageCropper({ image, onCropComplete, onCancel }) {
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem',
-                                padding: '0.75rem 1.5rem',
-                                borderRadius: '0.5rem',
-                                background: '#38bdf8', /* sky-400 */
-                                color: '#0f172a', /* slate-900 */
+                                gap: 'var(--space-xs)',
+                                padding: 'var(--space-xs) var(--space-sm)',
+                                borderRadius: 'var(--radius-sm)',
+                                background: 'var(--accent-primary)',
+                                color: 'var(--bg-primary)',
                                 border: 'none',
                                 cursor: 'pointer',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                transition: 'all 0.2s'
+                                fontSize: '0.875rem',
+                                fontWeight: 'var(--font-weight-medium)',
+                                transition: 'var(--transition-quick)',
                             }}
                         >
-                            <Check size={18} />
-                            Crop & Generate
+                            <Check size={16} strokeWidth={1.5} />
+                            Confirm
                         </button>
                     </div>
                 </div>

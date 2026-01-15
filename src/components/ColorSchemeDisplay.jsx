@@ -5,8 +5,12 @@ export function ColorSchemeDisplay({ colors }) {
     const [copiedAll, setCopiedAll] = React.useState(false);
     const [copiedIndex, setCopiedIndex] = React.useState(null);
 
+    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+        const hex = x.toString(16)
+        return hex.length === 1 ? '0' + hex : hex
+    }).join('')
+
     const copyToClipboard = (color, index) => {
-        // Convert RGB array to Hex
         const hex = rgbToHex(color[0], color[1], color[2]);
         navigator.clipboard.writeText(hex);
         setCopiedIndex(index);
@@ -20,61 +24,58 @@ export function ColorSchemeDisplay({ colors }) {
         setTimeout(() => setCopiedAll(false), 2000);
     };
 
-    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-        const hex = x.toString(16)
-        return hex.length === 1 ? '0' + hex : hex
-    }).join('')
-
     if (!colors || colors.length === 0) return null;
 
     return (
-        <div style={{
-            background: 'var(--glass-bg)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '2rem',
-        }}>
+        <div>
+            {/* Section header */}
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '1.5rem',
+                marginBottom: 'var(--space-lg)',
             }}>
                 <h2 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: '700',
-                    color: 'var(--text-primary)',
-                    margin: 0
+                    fontSize: '0.75rem',
+                    fontWeight: 'var(--font-weight-medium)',
+                    color: 'var(--text-muted)',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
                 }}>
-                    Color Palette
+                    Palette
                 </h2>
                 <button
                     onClick={copyAllColors}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem 1rem',
-                        background: 'var(--accent-primary)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 'var(--radius-md)',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '0.875rem',
-                        transition: 'all 0.2s',
-                        opacity: copiedAll ? 0.9 : 1
+                        gap: 'var(--space-xs)',
+                        padding: 'var(--space-xs) var(--space-sm)',
+                        background: 'transparent',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: '0.75rem',
+                        fontWeight: 'var(--font-weight-normal)',
+                        letterSpacing: '0.02em',
+                        transition: 'var(--transition-quick)',
+                    }}
+                    onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = 'var(--border-hover)';
+                    }}
+                    onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
                     }}
                 >
-                    {copiedAll ? <Check size={16} /> : <Copy size={16} />}
-                    {copiedAll ? 'Copied!' : 'Copy All'}
+                    {copiedAll ? <Check size={12} /> : <Copy size={12} />}
+                    {copiedAll ? 'Copied' : 'Copy all'}
                 </button>
             </div>
 
+            {/* Color swatches */}
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-                gap: '1rem'
+                display: 'flex',
+                gap: 'var(--space-xs)',
             }}>
                 {colors.map((color, index) => {
                     const hex = rgbToHex(color[0], color[1], color[2]);
@@ -85,38 +86,51 @@ export function ColorSchemeDisplay({ colors }) {
                             key={index}
                             onClick={() => copyToClipboard(color, index)}
                             style={{
+                                flex: 1,
+                                aspectRatio: '1',
                                 backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
-                                height: '100px',
-                                borderRadius: 'var(--radius-md)',
+                                borderRadius: 'var(--radius-sm)',
                                 cursor: 'pointer',
                                 position: 'relative',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                border: '1px solid rgba(0,0,0,0.1)',
-                                transition: 'transform 0.2s',
-                                ':hover': { transform: 'scale(1.05)' }
+                                transition: 'var(--transition-quick)',
+                                overflow: 'hidden',
                             }}
-                            className="color-swatch"
+                            title={hex}
                         >
-                            <div style={{
-                                opacity: 0,
-                                transition: 'opacity 0.2s',
-                                color: isLight ? '#000' : '#fff'
-                            }} className="copy-overlay">
-                                {copiedIndex === index ? <Check size={24} /> : <Copy size={24} />}
+                            {/* Hover overlay */}
+                            <div
+                                className="color-swatch-overlay"
+                                style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'rgba(0,0,0,0.3)',
+                                    opacity: 0,
+                                    transition: 'var(--transition-quick)',
+                                }}
+                            >
+                                {copiedIndex === index ? (
+                                    <Check size={16} color="#fff" />
+                                ) : (
+                                    <Copy size={16} color="#fff" />
+                                )}
                             </div>
+
+                            {/* Hex label */}
                             <span style={{
                                 position: 'absolute',
-                                bottom: '0.5rem',
+                                bottom: '4px',
                                 left: '50%',
                                 transform: 'translateX(-50%)',
-                                background: 'rgba(0,0,0,0.5)',
-                                color: '#fff',
-                                padding: '0.2rem 0.5rem',
-                                borderRadius: '4px',
-                                fontSize: '0.75rem',
-                                fontFamily: 'monospace'
+                                fontSize: '0.5rem',
+                                fontFamily: 'monospace',
+                                color: isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)',
+                                letterSpacing: '0',
                             }}>
                                 {hex}
                             </span>
@@ -124,12 +138,16 @@ export function ColorSchemeDisplay({ colors }) {
                     );
                 })}
             </div>
+
             <style>
                 {`
-          .color-swatch:hover .copy-overlay {
-            opacity: 1 !important;
-          }
-        `}
+                    .color-swatch-overlay:hover {
+                        opacity: 1 !important;
+                    }
+                    div:hover > .color-swatch-overlay {
+                        opacity: 1 !important;
+                    }
+                `}
             </style>
         </div>
     );

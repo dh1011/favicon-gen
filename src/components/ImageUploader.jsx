@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 
 export function ImageUploader({ onImageUpload, isGenerating }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -43,15 +43,14 @@ export function ImageUploader({ onImageUpload, isGenerating }) {
             onDragOver={handleDrag}
             onDrop={handleDrop}
             style={{
-                border: `2px dashed ${isDragging ? 'var(--accent-primary)' : 'var(--glass-border)'}`,
-                background: isDragging ? 'rgba(56, 189, 248, 0.1)' : 'var(--glass-bg)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '4rem',
+                border: `1px solid ${isDragging ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
+                background: isDragging ? 'var(--accent-subtle)' : 'transparent',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-xl) var(--space-lg)',
                 textAlign: 'center',
-                transition: 'all 0.3s ease',
+                transition: 'var(--transition-smooth)',
                 cursor: 'pointer',
                 position: 'relative',
-                overflow: 'hidden'
             }}
         >
             <input
@@ -72,26 +71,42 @@ export function ImageUploader({ onImageUpload, isGenerating }) {
 
             <div style={{ pointerEvents: 'none' }}>
                 {isGenerating ? (
-                    <Loader2 size={48} style={{ color: 'var(--accent-primary)', animation: 'spin 1s linear infinite' }} />
+                    <Loader2
+                        size={24}
+                        style={{
+                            color: 'var(--accent-primary)',
+                            animation: 'spin 1.5s linear infinite',
+                            marginBottom: 'var(--space-md)'
+                        }}
+                    />
                 ) : (
-                    <Upload size={48} style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }} />
+                    <Upload
+                        size={24}
+                        strokeWidth={1.5}
+                        style={{
+                            color: 'var(--text-muted)',
+                            marginBottom: 'var(--space-md)'
+                        }}
+                    />
                 )}
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
-                    {isGenerating ? 'Generating Icons...' : 'Drag & Drop or Click to Upload'}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                    Supports PNG, JPG, SVG. Recommended 512x512px.
+                <p style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
+                    fontWeight: 'var(--font-weight-light)',
+                    marginBottom: 'var(--space-xs)',
+                }}>
+                    {isGenerating ? 'Creating icons...' : 'Drop image here'}
                 </p>
+                {!isGenerating && (
+                    <p style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                        fontWeight: 'var(--font-weight-light)',
+                    }}>
+                        PNG, JPG, or SVG
+                    </p>
+                )}
             </div>
-
-            <style>
-                {`
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}
-            </style>
         </div>
     );
 }

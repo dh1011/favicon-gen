@@ -5,83 +5,106 @@ export function IconPreview({ icons, onDownload }) {
     if (!icons || icons.length === 0) return null;
 
     return (
-        <div style={{ animation: 'fadeIn 0.5s ease' }}>
+        <div>
+            {/* Section header */}
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '1.5rem'
+                marginBottom: 'var(--space-lg)',
             }}>
-                <h2 style={{ fontSize: '1.5rem' }}>Preview</h2>
+                <h2 style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 'var(--font-weight-medium)',
+                    color: 'var(--text-muted)',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                }}>
+                    Generated Icons
+                </h2>
                 <button
                     onClick={onDownload}
                     style={{
-                        background: 'var(--accent-primary)',
-                        color: 'var(--bg-primary)',
-                        padding: '0.75rem 1.5rem',
-                        borderRadius: 'var(--radius-md)',
-                        fontWeight: '600',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.5rem',
-                        boxShadow: 'var(--shadow-lg)',
-                        transition: 'transform 0.2s',
+                        gap: 'var(--space-xs)',
+                        padding: 'var(--space-xs) var(--space-sm)',
+                        background: 'transparent',
+                        color: 'var(--accent-primary)',
+                        border: '1px solid var(--accent-primary)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: '0.75rem',
+                        fontWeight: 'var(--font-weight-medium)',
+                        letterSpacing: '0.05em',
+                        transition: 'var(--transition-quick)',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                    onMouseEnter={e => {
+                        e.currentTarget.style.background = 'var(--accent-subtle)';
+                    }}
+                    onMouseLeave={e => {
+                        e.currentTarget.style.background = 'transparent';
+                    }}
                 >
-                    <Download size={20} />
-                    Download All
+                    <Download size={14} strokeWidth={1.5} />
+                    Download
                 </button>
             </div>
 
+            {/* Icon grid */}
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-                gap: '1.5rem'
+                gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                gap: 'var(--space-sm)',
             }}>
                 {icons.map((icon) => (
                     <div key={icon.name} style={{
-                        background: 'var(--glass-bg)',
-                        border: '1px solid var(--glass-border)',
-                        padding: '1.5rem',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-subtle)',
+                        padding: 'var(--space-md)',
                         borderRadius: 'var(--radius-md)',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '1rem',
-                        transition: 'border-color 0.2s',
+                        gap: 'var(--space-sm)',
+                        transition: 'var(--transition-quick)',
                     }}>
-                        <img
-                            src={icon.url}
-                            alt={icon.name}
-                            style={{
-                                width: icon.width > 64 ? 64 : icon.width,
-                                height: icon.width > 64 ? 64 : icon.height,
-                                objectFit: 'contain',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-                            }}
-                        />
+                        <div style={{
+                            width: '48px',
+                            height: '48px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <img
+                                src={icon.url}
+                                alt={icon.name}
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain',
+                                }}
+                            />
+                        </div>
                         <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem', wordBreak: 'break-all' }}>
-                                {icon.width}x{icon.height}
+                            <div style={{
+                                fontSize: '0.75rem',
+                                fontWeight: 'var(--font-weight-medium)',
+                                color: 'var(--text-primary)',
+                                marginBottom: '2px',
+                            }}>
+                                {icon.width}×{icon.height}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                            <div style={{
+                                fontSize: '0.625rem',
+                                color: 'var(--text-muted)',
+                                fontWeight: 'var(--font-weight-light)',
+                            }}>
                                 {icon.name}
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-
-            <style>
-                {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-        `}
-            </style>
         </div>
     );
 }

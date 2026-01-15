@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { ImageUploader } from './components/ImageUploader'
 import { IconPreview } from './components/IconPreview'
 import { ImageCropper } from './components/ImageCropper'
@@ -14,22 +14,17 @@ function App() {
   const [colorScheme, setColorScheme] = useState(null)
 
   const handleImageSelect = (file) => {
-    // Create a URL for the file to be used in the cropper
     const imageUrl = URL.createObjectURL(file)
     setSelectedImage(imageUrl)
-    // Reset previous results
     setIcons(null)
     setColorScheme(null)
   }
 
   const handleCropComplete = async (croppedBlob) => {
-    // User confirmed crop, proceed to generation
-    setSelectedImage(null) // Close cropper
-
-    // Proceed with generation using the cropped blob
+    setSelectedImage(null)
     setIsGenerating(true)
+
     try {
-      // Extract colors
       const img = new Image();
       const imageUrl = URL.createObjectURL(croppedBlob);
       img.src = imageUrl;
@@ -70,61 +65,65 @@ function App() {
 
   return (
     <div style={{
-      maxWidth: '1200px',
+      maxWidth: '900px',
       margin: '0 auto',
-      padding: '2rem',
+      padding: 'var(--space-lg)',
+      minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      gap: '3rem'
     }}>
-      <header style={{ textAlign: 'center', marginTop: '2rem' }}>
-        <img
-          src="/android-chrome-192x192.png"
-          alt="Favicon Generator Logo"
-          style={{
-            width: '80px',
-            height: '80px',
-            margin: '0 auto 1.5rem',
-            borderRadius: '1.5rem',
-            boxShadow: '0 0 20px rgba(56, 189, 248, 0.3)'
-          }}
-        />
+      {/* Header - minimal and centered */}
+      <header style={{
+        textAlign: 'center',
+        padding: 'var(--space-xl) 0',
+      }}>
         <h1 style={{
-          fontSize: '3.5rem',
-          fontWeight: '800',
-          background: 'linear-gradient(to right, var(--accent-primary), #818cf8)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          marginBottom: '1rem',
-          letterSpacing: '-0.02em'
+          fontSize: '1.5rem',
+          fontWeight: 'var(--font-weight-light)',
+          color: 'var(--text-primary)',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          marginBottom: 'var(--space-sm)',
         }}>
-          Favicon Generator
+          Favicon
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
-          Instantly generate pixel-perfect favicons and app icons for your next project. All completely browser-based.
+        <div className="zen-divider"></div>
+        <p style={{
+          color: 'var(--text-secondary)',
+          fontSize: '0.875rem',
+          fontWeight: 'var(--font-weight-light)',
+          maxWidth: '400px',
+          margin: '0 auto',
+        }}>
+          Generate icons for your project
         </p>
       </header>
 
-      <main style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+      {/* Main content */}
+      <main style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-xl)',
+        flex: 1,
+      }}>
         <section>
-          {/* Changed onImageUpload to handleImageSelect to trigger crop flow first */}
           <ImageUploader onImageUpload={handleImageSelect} isGenerating={isGenerating} />
         </section>
 
         {colorScheme && (
-          <section>
+          <section style={{ animation: 'fadeIn 0.6s ease' }}>
             <ColorSchemeDisplay colors={colorScheme} />
           </section>
         )}
 
         {icons && (
-          <section>
+          <section style={{ animation: 'fadeIn 0.6s ease' }}>
             <IconPreview icons={icons} onDownload={handleDownload} />
           </section>
         )}
       </main>
 
-      {/* Render Cropper Modal if an image is selected */}
+      {/* Cropper Modal */}
       {selectedImage && (
         <ImageCropper
           image={selectedImage}
@@ -133,14 +132,21 @@ function App() {
         />
       )}
 
+      {/* Footer - subtle */}
       <footer style={{
         textAlign: 'center',
-        padding: '2rem',
-        color: 'var(--text-secondary)',
-        borderTop: '1px solid var(--glass-border)',
-        marginTop: '2rem'
+        padding: 'var(--space-xl) 0 var(--space-lg)',
+        marginTop: 'auto',
       }}>
-        <p>© {new Date().getFullYear()} Favicon Generator. Built with React & Vite.</p>
+        <div className="zen-divider"></div>
+        <p style={{
+          color: 'var(--text-muted)',
+          fontSize: '0.75rem',
+          fontWeight: 'var(--font-weight-light)',
+          letterSpacing: '0.05em',
+        }}>
+          Crafted with simplicity
+        </p>
       </footer>
     </div>
   )
