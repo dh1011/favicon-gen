@@ -4,6 +4,12 @@ import { Upload, Loader2 } from 'lucide-react';
 export function ImageUploader({ onImageUpload, isGenerating }) {
     const [isDragging, setIsDragging] = useState(false);
 
+    const handleFile = useCallback((file) => {
+        if (file.type.startsWith('image/')) {
+            onImageUpload(file);
+        }
+    }, [onImageUpload]);
+
     const handleDrag = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -22,17 +28,11 @@ export function ImageUploader({ onImageUpload, isGenerating }) {
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             handleFile(e.dataTransfer.files[0]);
         }
-    }, [onImageUpload]);
+    }, [handleFile]);
 
     const handleChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             handleFile(e.target.files[0]);
-        }
-    };
-
-    const handleFile = (file) => {
-        if (file.type.startsWith('image/')) {
-            onImageUpload(file);
         }
     };
 
