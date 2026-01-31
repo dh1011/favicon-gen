@@ -1,7 +1,7 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 
-export function IconPreview({ icons, onDownload }) {
+export function IconPreview({ icons, mobileIcons, onDownload, onDownloadMobile }) {
     if (!icons || icons.length === 0) return null;
 
     return (
@@ -12,6 +12,8 @@ export function IconPreview({ icons, onDownload }) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: 'var(--space-lg)',
+                flexWrap: 'wrap',
+                gap: 'var(--space-sm)',
             }}>
                 <h2 style={{
                     fontSize: '0.75rem',
@@ -22,32 +24,65 @@ export function IconPreview({ icons, onDownload }) {
                 }}>
                     Generated Icons
                 </h2>
-                <button
-                    onClick={onDownload}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 'var(--space-xs)',
-                        padding: 'var(--space-xs) var(--space-sm)',
-                        background: 'transparent',
-                        color: 'var(--accent-primary)',
-                        border: '1px solid var(--accent-primary)',
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: '0.75rem',
-                        fontWeight: 'var(--font-weight-medium)',
-                        letterSpacing: '0.05em',
-                        transition: 'var(--transition-quick)',
-                    }}
-                    onMouseEnter={e => {
-                        e.currentTarget.style.background = 'var(--accent-subtle)';
-                    }}
-                    onMouseLeave={e => {
-                        e.currentTarget.style.background = 'transparent';
-                    }}
-                >
-                    <Download size={14} strokeWidth={1.5} />
-                    Download
-                </button>
+                <div style={{
+                    display: 'flex',
+                    gap: 'var(--space-xs)',
+                }}>
+                    <button
+                        onClick={onDownload}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-xs)',
+                            padding: 'var(--space-xs) var(--space-sm)',
+                            background: 'transparent',
+                            color: 'var(--accent-primary)',
+                            border: '1px solid var(--accent-primary)',
+                            borderRadius: 'var(--radius-sm)',
+                            fontSize: '0.75rem',
+                            fontWeight: 'var(--font-weight-medium)',
+                            letterSpacing: '0.05em',
+                            transition: 'var(--transition-quick)',
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'var(--accent-subtle)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'transparent';
+                        }}
+                    >
+                        <Download size={14} strokeWidth={1.5} />
+                        Web Icons (6)
+                    </button>
+                    {mobileIcons && (
+                        <button
+                            onClick={onDownloadMobile}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--space-xs)',
+                                padding: 'var(--space-xs) var(--space-sm)',
+                                background: 'transparent',
+                                color: 'var(--accent-primary)',
+                                border: '1px solid var(--accent-primary)',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: '0.75rem',
+                                fontWeight: 'var(--font-weight-medium)',
+                                letterSpacing: '0.05em',
+                                transition: 'var(--transition-quick)',
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.background = 'var(--accent-subtle)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = 'transparent';
+                            }}
+                        >
+                            <Download size={14} strokeWidth={1.5} />
+                            Mobile Icons (5)
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Icon grid */}

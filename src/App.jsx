@@ -3,12 +3,13 @@ import { ImageUploader } from './components/ImageUploader'
 import { IconPreview } from './components/IconPreview'
 import { ImageCropper } from './components/ImageCropper'
 import { ColorSchemeDisplay } from './components/ColorSchemeDisplay'
-import { generateFavicons, downloadZip } from './utils/generator'
+import { generateFavicons, generateMobileIcons, downloadZip, downloadMobileZip } from './utils/generator'
 import ColorThief from 'colorthief'
 import './index.css'
 
 function App() {
   const [icons, setIcons] = useState(null)
+  const [mobileIcons, setMobileIcons] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
   const [colorScheme, setColorScheme] = useState(null)
@@ -17,6 +18,7 @@ function App() {
     const imageUrl = URL.createObjectURL(file)
     setSelectedImage(imageUrl)
     setIcons(null)
+    setMobileIcons(null)
     setColorScheme(null)
   }
 
@@ -43,8 +45,12 @@ function App() {
       }
 
       await new Promise(resolve => setTimeout(resolve, 800))
-      const generated = await generateFavicons(croppedBlob)
-      setIcons(generated)
+      const [webGenerated, mobileGenerated] = await Promise.all([
+        generateFavicons(croppedBlob),
+        generateMobileIcons(croppedBlob)
+      ])
+      setIcons(webGenerated)
+      setMobileIcons(mobileGenerated)
     } catch (error) {
       console.error("Failed to generate icons:", error)
       alert("Something went wrong while generating icons.")
@@ -60,6 +66,12 @@ function App() {
   const handleDownload = () => {
     if (icons) {
       downloadZip(icons)
+    }
+  }
+
+  const handleDownloadMobile = () => {
+    if (mobileIcons) {
+      downloadMobileZip(mobileIcons)
     }
   }
 
@@ -118,7 +130,12 @@ function App() {
 
         {icons && (
           <section style={{ animation: 'fadeIn 0.6s ease' }}>
-            <IconPreview icons={icons} onDownload={handleDownload} />
+            <IconPreview
+              icons={icons}
+              mobileIcons={mobileIcons}
+              onDownload={handleDownload}
+              onDownloadMobile={handleDownloadMobile}
+            />
           </section>
         )}
       </main>
