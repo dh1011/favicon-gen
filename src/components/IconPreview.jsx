@@ -1,7 +1,7 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 
-export function IconPreview({ icons, mobileIcons, onDownload, onDownloadMobile }) {
+export function IconPreview({ icons, mobileIcons, firefoxIcons, onDownload, onDownloadMobile, onDownloadFirefox }) {
     if (!icons || icons.length === 0) return null;
 
     return (
@@ -80,6 +80,34 @@ export function IconPreview({ icons, mobileIcons, onDownload, onDownloadMobile }
                         >
                             <Download size={14} strokeWidth={1.5} />
                             Mobile Icons (5)
+                        </button>
+                    )}
+                    {firefoxIcons && (
+                        <button
+                            onClick={onDownloadFirefox}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--space-xs)',
+                                padding: 'var(--space-xs) var(--space-sm)',
+                                background: 'transparent',
+                                color: 'var(--accent-primary)',
+                                border: '1px solid var(--accent-primary)',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: '0.75rem',
+                                fontWeight: 'var(--font-weight-medium)',
+                                letterSpacing: '0.05em',
+                                transition: 'var(--transition-quick)',
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.background = 'var(--accent-subtle)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = 'transparent';
+                            }}
+                        >
+                            <Download size={14} strokeWidth={1.5} />
+                            Firefox Icons (6)
                         </button>
                     )}
                 </div>
