@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React + Vite web application that generates favicon packages and mobile app icons from uploaded images. Users upload an image, crop it to square dimensions, and the app generates multiple favicon sizes (16x16, 32x32, 180x180, 192x192, 512x512) and mobile app icons (1024x1024, 2048x2048, plus favicon) plus a color palette extraction feature using ColorThief.
+This is a React + Vite web application that generates favicon packages and mobile app icons from uploaded images. Users upload an image, crop it to square dimensions, and the app generates multiple favicon sizes (16x16, 32x32, 180x180, 192x192, 512x512), mobile app icons (1024x1024, 2048x2048, plus favicon), and Firefox-specific icons (16x16, 32x32, 48x48, 64x64, 128x128) plus a color palette extraction feature using ColorThief.
 
 ## Development Commands
 
@@ -49,17 +49,18 @@ The Dockerfile uses a multi-stage build: Node 18 Alpine for building, Nginx Alpi
 3. **App.handleCropComplete** → Processes cropped image:
    - Extracts color palette using ColorThief
    - Generates web favicons via `generateFavicons()`
-   - Generates mobile app icons via `generateMobileIcons()` (in parallel)
+   - Generates mobile app icons via `generateMobileIcons()`
+   - Generates Firefox icons via `generateFirefoxIcons()` (all in parallel)
 4. **ColorSchemeDisplay** → Shows extracted color palette
-5. **IconPreview** → Displays generated icons with two download buttons
-6. **downloadZip()** / **downloadMobileZip()** → Packages icons into separate ZIP files using JSZip
+5. **IconPreview** → Displays generated icons with three download buttons
+6. **downloadZip()** / **downloadMobileZip()** / **downloadFirefoxZip()** → Packages icons into separate ZIP files using JSZip
 
 ### Key Components
 
-- **App.jsx**: Main orchestrator managing state flow (selectedImage → cropping → generation → preview). Manages both web and mobile icon states.
+- **App.jsx**: Main orchestrator managing state flow (selectedImage → cropping → generation → preview). Manages web, mobile, and Firefox icon states.
 - **ImageCropper.jsx**: Wraps react-easy-crop, handles rotation/zoom, calls `getCroppedImg()` from canvasUtils
 - **ColorSchemeDisplay.jsx**: Displays color palette as visual swatches
-- **IconPreview.jsx**: Grid preview of generated web icons with two download buttons (web and mobile)
+- **IconPreview.jsx**: Grid preview of generated web icons with three download buttons (web, mobile, and Firefox)
 - **ImageUploader.jsx**: Drag-and-drop + file picker interface
 
 ### Utilities
@@ -67,8 +68,10 @@ The Dockerfile uses a multi-stage build: Node 18 Alpine for building, Nginx Alpi
 - **generator.js**:
   - `generateFavicons()`: Creates 5 standard favicon sizes from cropped image using canvas
   - `generateMobileIcons()`: Creates 4 mobile app icon sizes (icon.png, adaptive-icon.png, splash-icon.png, favicon-32x32.png)
+  - `generateFirefoxIcons()`: Creates 5 Firefox-specific icon sizes (16, 32, 48, 64, 128px)
   - `downloadZip()`: Bundles web icons into favicons.zip, includes favicon.ico (copy of 32x32 PNG)
   - `downloadMobileZip()`: Bundles mobile icons into mobile-icons.zip, includes favicon.ico (copy of 32x32 PNG)
+  - `downloadFirefoxZip()`: Bundles Firefox icons into firefox-icons.zip, includes favicon.ico (copy of 32x32 PNG)
 
 - **canvasUtils.js**:
   - `getCroppedImg()`: Handles canvas-based image cropping with rotation/flip support
@@ -95,9 +98,16 @@ The app uses a minimal "zen" aesthetic with CSS custom properties for spacing, c
     - splash-icon.png (2048x2048) - Splash screen icon
     - favicon-32x32.png (32x32)
     - favicon.ico (alias of 32x32 PNG)
+  - **Firefox Icons** (6 files in firefox-icons.zip):
+    - firefox-16x16.png (16x16) - Tab bar
+    - firefox-32x32.png (32x32) - Tab bar (high-DPI)
+    - firefox-48x48.png (48x48) - Bookmarks toolbar
+    - firefox-64x64.png (64x64) - Windows taskbar shortcut
+    - firefox-128x128.png (128x128) - Mozilla applications
+    - favicon.ico (alias of 32x32 PNG)
 - **Quality**: Canvas uses `imageSmoothingQuality: 'high'` for resizing
 - **Export Format**: All icons are PNG; .ico file is a renamed PNG (works in modern browsers)
-- **Performance**: Web and mobile icons are generated in parallel using Promise.all() for optimal speed
+- **Performance**: Web, mobile, and Firefox icons are generated in parallel using Promise.all() for optimal speed
 
 ## Code Style
 

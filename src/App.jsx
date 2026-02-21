@@ -3,13 +3,14 @@ import { ImageUploader } from './components/ImageUploader'
 import { IconPreview } from './components/IconPreview'
 import { ImageCropper } from './components/ImageCropper'
 import { ColorSchemeDisplay } from './components/ColorSchemeDisplay'
-import { generateFavicons, generateMobileIcons, downloadZip, downloadMobileZip } from './utils/generator'
+import { generateFavicons, generateMobileIcons, generateFirefoxIcons, downloadZip, downloadMobileZip, downloadFirefoxZip } from './utils/generator'
 import ColorThief from 'colorthief'
 import './index.css'
 
 function App() {
   const [icons, setIcons] = useState(null)
   const [mobileIcons, setMobileIcons] = useState(null)
+  const [firefoxIcons, setFirefoxIcons] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
   const [colorScheme, setColorScheme] = useState(null)
@@ -19,6 +20,7 @@ function App() {
     setSelectedImage(imageUrl)
     setIcons(null)
     setMobileIcons(null)
+    setFirefoxIcons(null)
     setColorScheme(null)
   }
 
@@ -45,12 +47,14 @@ function App() {
       }
 
       await new Promise(resolve => setTimeout(resolve, 800))
-      const [webGenerated, mobileGenerated] = await Promise.all([
+      const [webGenerated, mobileGenerated, firefoxGenerated] = await Promise.all([
         generateFavicons(croppedBlob),
-        generateMobileIcons(croppedBlob)
+        generateMobileIcons(croppedBlob),
+        generateFirefoxIcons(croppedBlob)
       ])
       setIcons(webGenerated)
       setMobileIcons(mobileGenerated)
+      setFirefoxIcons(firefoxGenerated)
     } catch (error) {
       console.error("Failed to generate icons:", error)
       alert("Something went wrong while generating icons.")
@@ -72,6 +76,12 @@ function App() {
   const handleDownloadMobile = () => {
     if (mobileIcons) {
       downloadMobileZip(mobileIcons)
+    }
+  }
+
+  const handleDownloadFirefox = () => {
+    if (firefoxIcons) {
+      downloadFirefoxZip(firefoxIcons)
     }
   }
 
@@ -133,8 +143,10 @@ function App() {
             <IconPreview
               icons={icons}
               mobileIcons={mobileIcons}
+              firefoxIcons={firefoxIcons}
               onDownload={handleDownload}
               onDownloadMobile={handleDownloadMobile}
+              onDownloadFirefox={handleDownloadFirefox}
             />
           </section>
         )}
